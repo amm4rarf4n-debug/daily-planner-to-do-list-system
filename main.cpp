@@ -7,9 +7,11 @@
 #include <cctype>
 using namespace std;
 
+// Daily Planner / To-Do List System
 const int MAX_TASKS = 100;
 const string DATA_FILE = "tasks.txt";
 
+// Task structure to hold task details
 struct Task {
     int id;
     string title;
@@ -19,11 +21,13 @@ struct Task {
     bool completed;
 };
 
+// Function prototypes
 void clearInput() {
     cin.clear();
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+// Validate date format (YYYY-MM-DD) and basic date values
 bool isValidDate(const string &date) {
     if (date.length() != 10 || date[4] != '-' || date[7] != '-') {
         return false;
@@ -40,6 +44,7 @@ bool isValidDate(const string &date) {
     return month >= 1 && month <= 12 && day >= 1 && day <= 31;
 }
 
+// Validate time format (HH:MM) and basic time values
 bool isValidTime(const string &time) {
     if (time.length() != 5 || time[2] != ':') {
         return false;
@@ -56,6 +61,7 @@ bool isValidTime(const string &time) {
     return hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59;
 }
 
+// Get integer input with validation for a specific range
 int getIntInput(const string &prompt, int minValue, int maxValue) {
     int value;
 
@@ -74,6 +80,7 @@ int getIntInput(const string &prompt, int minValue, int maxValue) {
     }
 }
 
+// Get non-empty string input
 string getRequiredText(const string &prompt) {
     string text;
 
@@ -89,6 +96,7 @@ string getRequiredText(const string &prompt) {
     return text;
 }
 
+// Get and validate date input
 string getDateInput() {
     string date;
 
@@ -104,6 +112,7 @@ string getDateInput() {
     return date;
 }
 
+// Get and validate time input
 string getTimeInput() {
     string time;
 
@@ -119,6 +128,7 @@ string getTimeInput() {
     return time;
 }
 
+// Convert priority integer to string representation
 string priorityName(int priority) {
     if (priority == 1) {
         return "High";
@@ -129,6 +139,7 @@ string priorityName(int priority) {
     return "Low";
 }
 
+// Print table header for task display
 void printHeader() {
     cout << left
         << setw(5) << "ID"
@@ -140,6 +151,7 @@ void printHeader() {
     cout << string(70, '-') << "\n";
 }
 
+// Print task details in a formatted manner
 void printTask(const Task& task) {
     string shortTitle = task.title;
 
@@ -156,6 +168,7 @@ void printTask(const Task& task) {
         << (task.completed ? "Completed" : "Pending") << "\n";
 }
 
+// Find the index of a task by its ID, return -1 if not found
 int findTaskIndexById(Task tasks[], int taskCount, int id) {
     for (int i = 0; i < taskCount; i++) {
         if (tasks[i].id == id) {
@@ -166,6 +179,7 @@ int findTaskIndexById(Task tasks[], int taskCount, int id) {
     return -1;
 }
 
+// Get the next available task ID by finding the highest existing ID and adding 1
 int getNextId(Task tasks[], int taskCount) {
     int highestId = 0;
 
@@ -178,6 +192,7 @@ int getNextId(Task tasks[], int taskCount) {
     return highestId + 1;
 }
 
+// Add a new task to the task list with user input and validation
 void addTask(Task tasks[], int& taskCount) {
     if (taskCount >= MAX_TASKS) {
         cout << "Task list is full. Please delete a task first.\n";
@@ -196,6 +211,7 @@ void addTask(Task tasks[], int& taskCount) {
     cout << "Task added successfully.\n";
 }
 
+// Display all tasks in a formatted table, or show a message if no tasks are available
 void viewAllTasks(Task tasks[], int taskCount) {
     cout << "\n--- All Tasks ---\n";
 
@@ -210,6 +226,7 @@ void viewAllTasks(Task tasks[], int taskCount) {
     }
 }
 
+// Display tasks that match a specific date entered by the user, or show a message if no tasks are found for that date
 void viewTasksByDate(Task tasks[], int taskCount) {
     string date = getDateInput();
     bool found = false;
@@ -229,6 +246,7 @@ void viewTasksByDate(Task tasks[], int taskCount) {
     }
 }
 
+// Search for tasks that contain a keyword in their title and display the matching tasks, or show a message if no matches are found
 void searchTask(Task tasks[], int taskCount) {
     string keyword = getRequiredText("Enter keyword to search: ");
     bool found = false;
@@ -248,6 +266,7 @@ void searchTask(Task tasks[], int taskCount) {
     }
 }
 
+// Update an existing task by its ID with new details entered by the user, or show a message if the task ID is not found
 void updateTask(Task tasks[], int taskCount) {
     int id = getIntInput("Enter task ID to update: ", 1, 9999);
     int index = findTaskIndexById(tasks, taskCount, id);
@@ -266,6 +285,7 @@ void updateTask(Task tasks[], int taskCount) {
     cout << "Task updated successfully.\n";
 }
 
+// Mark a task as completed by its ID, or show a message if the task ID is not found
 void markTaskComplete(Task tasks[], int taskCount) {
     int id = getIntInput("Enter task ID to mark complete: ", 1, 9999);
     int index = findTaskIndexById(tasks, taskCount, id);
@@ -279,6 +299,7 @@ void markTaskComplete(Task tasks[], int taskCount) {
     cout << "Task marked as completed.\n";
 }
 
+// Delete a task by its ID and shift remaining tasks up to fill the gap, or show a message if the task ID is not found
 void deleteTask(Task tasks[], int& taskCount) {
     int id = getIntInput("Enter task ID to delete: ", 1, 9999);
     int index = findTaskIndexById(tasks, taskCount, id);
@@ -296,6 +317,7 @@ void deleteTask(Task tasks[], int& taskCount) {
     cout << "Task deleted successfully.\n";
 }
 
+// Show a summary of the planner including total tasks, completed tasks, pending tasks, and high-priority pending tasks
 void showSummary(Task tasks[], int taskCount) {
     int completed = 0;
     int highPriorityPending = 0;
@@ -316,6 +338,7 @@ void showSummary(Task tasks[], int taskCount) {
     cout << "High-priority pending tasks: " << highPriorityPending << "\n";
 }
 
+// Save tasks to a file in a simple delimited format, or show a message if the file cannot be opened
 void saveTasks(Task tasks[], int taskCount) {
     ofstream file(DATA_FILE);
 
@@ -334,6 +357,7 @@ void saveTasks(Task tasks[], int taskCount) {
     }
 }
 
+// Load tasks from a file, parsing the delimited format and populating the task array, or show a message if the file cannot be opened
 void loadTasks(Task tasks[], int& taskCount) {
     ifstream file(DATA_FILE);
     string line;
@@ -360,6 +384,7 @@ void loadTasks(Task tasks[], int& taskCount) {
     }
 }
 
+// Display the main menu with options for the user to choose from
 void showMenu() {
     cout << "\n====================================\n";
     cout << " Daily Planner / To-Do List System\n";
@@ -375,6 +400,7 @@ void showMenu() {
     cout << "9. Save and exit\n";
 }
 
+// Main function to run the daily planner system, handling user input and calling appropriate functions based on the user's choice
 int main() {
     Task tasks[MAX_TASKS];
     int taskCount = 0;
